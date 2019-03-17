@@ -1,2 +1,2 @@
-# -home-admin1-PycharmProjects-scipting
+# PycharmProjects-scipting
 Python Scripting project
