@@ -1,0 +1,107 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "name": "Postfix software in Centos 7.txt",
+      "provenance": [],
+      "collapsed_sections": [],
+      "authorship_tag": "ABX9TyOqdjIBio6pxfub7XDxV4zC",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/restlingclone/-home-admin1-PycharmProjects-scipting/blob/master/Postfix_software_in_Centos_7.txt\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "HjpM_0yfixF6"
+      },
+      "source": [
+        ""
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "KeHGmMDIfiW_"
+      },
+      "source": [
+        "Postfix install in centos 7\n",
+        "\n",
+        "1. Check whether the postfix software is install or not in the current Server [Centos 7]\n",
+        "    1.1 Check whether postfix software is available or not.\n",
+        "          command:- rpm -qa | egrep postfix\n",
+        "    1.2 If not present or older version of postfix then , install new one. \n",
+        "          command:- yum insatll -y postfix\n",
+        "    1.3 After postfix get insatll then trigger below command to make it start and enable it.\n",
+        "        command:- systemctl start postfix\n",
+        "                  systemctl enable postfix                        \n",
+        "\n",
+        "2. Configure the Postfix.\n",
+        "    2.1 After postfix is install then, start configuring the service. All of the options for the service is available in\n",
+        "        /etc/postfix/. The main configuration file is present in /etc/postfix/main.cf \n",
+        "    2.2 Go to postfix configuration file located at [/etc/postfix/main.cf] and change below options:-\n",
+        "        2.2.1 myhostname = [mail server hostname] example:- myhostname = main.xyz.com\n",
+        "        2.2.2 mydomain = [handling domain] example:- mydomain = xyz.com\n",
+        "        2.2.3 mail_spool_directory = location where mail will be stored [inshort:- mailbox location] example:- mail_spool_directory = /var/mail\n",
+        "        2.2.4 mynetworks = list of trusted remote SMTP servers that can relay through the server. example:- mynetworks = 127.0.0.1/8 , 192.168.0.1/24\n",
+        "              In mynetworks add local network IP addresses, network/netmask that are separated by commas or whitespace. As it is important to use local network\n",
+        "              so as to avoid unauthorized users access.\n",
+        "\n",
+        "3. Testing Postfix.\n",
+        "    3.1 Send a mail to local recipient, if successful then send to remote recipient [gmail.com,etc]\n",
+        "        telnet [hostname entry >>> main.xyz.com] 25[default port] example:- telnet main.xyz.com 25\n",
+        "        Enter HELO to tell server which domain we are comming from example:- HELO xyz.com\n",
+        "        Next is the Sender email id example:- MAIL FROM: abc@xyz.com\n",
+        "        Then the entry of the Recipient example:- RCPT TO: def@ghju.in\n",
+        "        Finally we add the context of the message \n",
+        "        example:- \n",
+        "        DATA \n",
+        "        Subject: This is a Test message\n",
+        "        Hello,\n",
+        "        This is a test message.\n",
+        "        .\n",
+        "        In order to finish the message body hit [.] and then enter key.A code notify will response notify and then enter \"quit\" command to close\n",
+        "        the mailing window.\n",
+        "\n",
+        "        Go to /var/log/maillog to view logs where any errors or successful attempt has been done or not.\n",
+        "        \n",
+        "4. Securing Postfix\n",
+        "    4.1 Generate SSL session over TLS for the SMTP server.\n",
+        "        First generate the private key and the certification Signing request [CSR] \n",
+        "          command:- openssl req -nodes -newkey rsa:2048 --keyout privatekey .key -out mail.csr\n",
+        "        Then generate a signing request and copy it to the /etc/postfix directory:-\n",
+        "          command:- openssl x509 -req -days 365 -in mail.csr -signkey privatekey.key -out secure.crt\n",
+        "                    cp [privatekey.key, secure.crt] /etc/postfix\n",
+        "        Once this process is complete , you can add TLS options to the postfix  config file:-\n",
+        "          smtpd_use_tls = yes\n",
+        "          smtpd_tls_cert_file = /etc/postfix/secure.crt\n",
+        "          smtpd_tls_key_file = /etc/postfix/privatekey.key\n",
+        "          smptd_tls_security_level = may\n",
+        "        Then restart the postfix software.                \n",
+        "\n",
+        "\n",
+        "        "
+      ],
+      "execution_count": null,
+      "outputs": []
+    }
+  ]
+}
